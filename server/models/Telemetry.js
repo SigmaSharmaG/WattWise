@@ -1,29 +1,37 @@
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 
-const telemetrySchema = new mongoose.Schema({
-    deviceId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Device',
-        required:true,
+const telemetrySchema = new mongoose.Schema(
+  {
+    device: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Device",
+      required: true,
+      index: true,
     },
-    voltage:{
-        type:Double,
-        required:true,
-        default:0.0
-    },
-    current:{
-        type:Double,
-        required:true,
-        default:0.0
-    },
-    power:{
-        type:Double,
-        required:true,
-        default:0.0
-    },
-    
-},{timestamps:true})
 
-const Telemetry = mongoose.model('Telemetry',telemetrySchema);
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
 
-export default Telemetry;
+    voltageV: { type: Number, min: 0 },
+    currentMA: { type: Number, min: 0 },
+    powerW: { type: Number, min: 0 },
+    energyKwh: { type: Number, min: 0 },
+    frequencyHz: { type: Number, min: 0 },
+    powerFactor: { type: Number, min: 0, max: 1 },
+
+    timestamp: {
+      type: Date,
+      default: Date.now,
+      index: true,
+    },
+  },
+  { timestamps: true }
+);
+
+telemetrySchema.index({ device: 1, timestamp: -1 });
+
+export default mongoose.model("Telemetry", telemetrySchema);
