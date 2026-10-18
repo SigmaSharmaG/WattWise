@@ -1,23 +1,61 @@
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 
-const homeSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        trim:true,
+const homeSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100,
     },
-    ownerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:true,
+
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
     },
-    tarrif:{
-        type:String,
-        required:true,
-    }
 
-},{timestamps:true})
+    address: {
+      type: String,
+      trim: true,
+      default: "",
+    },
 
-const Home = mongoose.model('Home',homeSchema);
+    tariffPerKwh: {
+      type: Number,
+      default: 7.8,
+      min: 0,
+    },
+
+    monthlyBudget: {
+      type: Number,
+      default: 3200,
+      min: 0,
+    },
+
+    currency: {
+      type: String,
+      default: "INR",
+      enum: ["INR"],
+    },
+
+    settings: {
+      energyMode: {
+        type: String,
+        enum: ["saving", "balanced", "efficient"],
+        default: "balanced",
+      },
+
+      notifications: {
+        type: Boolean,
+        default: true,
+      },
+    },
+  },
+  { timestamps: true }
+);
+
+const Home = mongoose.model("Home", homeSchema);
 
 export default Home;
